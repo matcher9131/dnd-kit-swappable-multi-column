@@ -1,6 +1,6 @@
 type ItemProps = {
     readonly labelText: string;
-    readonly className: string;
+    readonly className?: string;
 };
 
 const Item = ({ labelText, className }: ItemProps): JSX.Element => {

@@ -1,13 +1,9 @@
 import { useRecoilValue } from "recoil";
-import Column from "./components/column/Column";
 import Container from "./components/container/Container";
-import Item from "./components/item/Item";
 import { containerChildrenState } from "./models/containerChildren";
 import { DndContext } from "@dnd-kit/core";
-
-const getItemBgColor = (labelText: string): string => {
-    return labelText.startsWith("A") ? "bg-red-300" : labelText.startsWith("B") ? "bg-green-300" : "bg-blue-300";
-};
+import { rectSwappingStrategy, SortableContext } from "@dnd-kit/sortable";
+import SortableColumn from "./components/column/SortableColumn";
 
 const App = (): JSX.Element => {
     const columns = useRecoilValue(containerChildrenState);
@@ -16,13 +12,11 @@ const App = (): JSX.Element => {
         <div className="w-full p-5">
             <DndContext>
                 <Container>
-                    {columns.map((column) => (
-                        <Column key={column.header} header={column.header}>
-                            {column.items.map((item) => (
-                                <Item key={item} labelText={item} className={getItemBgColor(item)} />
-                            ))}
-                        </Column>
-                    ))}
+                    <SortableContext items={columns.map((column) => column.header)} strategy={rectSwappingStrategy}>
+                        {columns.map((column) => (
+                            <SortableColumn key={column.header} header={column.header} />
+                        ))}
+                    </SortableContext>
                 </Container>
             </DndContext>
         </div>
