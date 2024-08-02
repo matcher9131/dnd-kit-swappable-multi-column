@@ -1,16 +1,27 @@
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import Container from "./components/container/Container";
 import { containerChildrenState } from "./models/containerChildren";
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core";
 import { rectSwappingStrategy, SortableContext } from "@dnd-kit/sortable";
 import SortableColumn from "./components/column/SortableColumn";
+import { activeIdState } from "./models/dragTargets";
 import { useContainerChildren } from "./models/useContainerChildren";
+import DragOverlayColumn from "./components/column/DragOverlayColumn";
+import { getItemBgColor } from "./util";
+import Item from "./components/item/Item";
 
 const App = (): JSX.Element => {
     const columns = useRecoilValue(containerChildrenState);
     const { swap } = useContainerChildren();
+    const [activeId, setActiveId] = useRecoilState(activeIdState);
+
+    const handleDragStart = (e: DragStartEvent) => {
+        setActiveId(e.active.id.toString());
+    };
 
     const handleDragEnd = (e: DragEndEvent): void => {
+        setActiveId(null);
+
         const activeId = e.active.id.toString();
         const overId = e.over?.id?.toString();
         if (overId == null) return;
@@ -24,7 +35,7 @@ const App = (): JSX.Element => {
 
     return (
         <div className="w-full p-5">
-            <DndContext onDragEnd={handleDragEnd}>
+            <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
                 <Container>
                     <SortableContext items={columns.map((column) => column.header)} strategy={rectSwappingStrategy}>
                         {columns.map((column) => (
@@ -32,6 +43,14 @@ const App = (): JSX.Element => {
                         ))}
                     </SortableContext>
                 </Container>
+                <DragOverlay>
+                    {activeId != null &&
+                        (columns.some((column) => column.header === activeId) ? (
+                            <DragOverlayColumn header={activeId} />
+                        ) : (
+                            <Item labelText={activeId} className={getItemBgColor(activeId)} />
+                        ))}
+                </DragOverlay>
             </DndContext>
         </div>
     );

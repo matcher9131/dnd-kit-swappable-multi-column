@@ -1,18 +1,19 @@
-import SortableHolder from "../sortableHolder";
+import { clsx } from "clsx";
+import { useRecoilValue } from "recoil";
 import Item from "./Item";
-
-const getBgColor = (labelText: string): string => {
-    return labelText.startsWith("A") ? "bg-red-300" : labelText.startsWith("B") ? "bg-green-300" : "bg-blue-300";
-};
+import SortableHolder from "../sortableHolder";
+import { activeIdState } from "../../models/dragTargets";
+import { getItemBgColor } from "../../util";
 
 type SortableItemProps = {
     readonly labelText: string;
 };
 
 const SortableItem = ({ labelText }: SortableItemProps): JSX.Element => {
+    const isDragActive = useRecoilValue(activeIdState) === labelText;
     return (
-        <SortableHolder id={labelText}>
-            <Item labelText={labelText} className={getBgColor(labelText)} />
+        <SortableHolder id={labelText} className={clsx(isDragActive && "opacity-0")}>
+            <Item labelText={labelText} className={getItemBgColor(labelText)} />
         </SortableHolder>
     );
 };
