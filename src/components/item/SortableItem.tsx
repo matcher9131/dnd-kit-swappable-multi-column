@@ -2,7 +2,7 @@ import { clsx } from "clsx";
 import { useRecoilValue } from "recoil";
 import Item from "./Item";
 import SortableHolder from "../sortableHolder";
-import { activeIdState } from "../../models/dragTargets";
+import { activeIdState, activeParentIdSelector, overIdState, overParentIdSelector } from "../../models/dragTargets";
 import { getItemBgColor } from "../../util";
 
 type SortableItemProps = {
@@ -11,8 +11,13 @@ type SortableItemProps = {
 
 const SortableItem = ({ labelText }: SortableItemProps): JSX.Element => {
     const isDragActive = useRecoilValue(activeIdState) === labelText;
+    const isDragOver = useRecoilValue(overIdState) === labelText;
+    const isDraggingBetweenColumns = useRecoilValue(activeParentIdSelector) !== useRecoilValue(overParentIdSelector);
     return (
-        <SortableHolder id={labelText} className={clsx(isDragActive && "opacity-0")}>
+        <SortableHolder
+            id={labelText}
+            className={clsx(isDragActive && "opacity-0", isDragOver && isDraggingBetweenColumns && "opacity-50")}
+        >
             <Item labelText={labelText} className={getItemBgColor(labelText)} />
         </SortableHolder>
     );

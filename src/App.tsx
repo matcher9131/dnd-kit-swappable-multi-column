@@ -1,10 +1,10 @@
 import { useRecoilState, useRecoilValue } from "recoil";
 import Container from "./components/container/Container";
 import { containerChildrenState } from "./models/containerChildren";
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core";
 import { rectSwappingStrategy, SortableContext } from "@dnd-kit/sortable";
 import SortableColumn from "./components/column/SortableColumn";
-import { activeIdState } from "./models/dragTargets";
+import { activeIdState, overIdState } from "./models/dragTargets";
 import { useContainerChildren } from "./models/useContainerChildren";
 import DragOverlayColumn from "./components/column/DragOverlayColumn";
 import { getItemBgColor } from "./util";
@@ -14,13 +14,19 @@ const App = (): JSX.Element => {
     const columns = useRecoilValue(containerChildrenState);
     const { swap } = useContainerChildren();
     const [activeId, setActiveId] = useRecoilState(activeIdState);
+    const [, setOverId] = useRecoilState(overIdState);
 
     const handleDragStart = (e: DragStartEvent) => {
         setActiveId(e.active.id.toString());
     };
 
+    const handleDragOver = (e: DragOverEvent) => {
+        setOverId(e.over?.id?.toString() ?? null);
+    };
+
     const handleDragEnd = (e: DragEndEvent): void => {
         setActiveId(null);
+        setOverId(null);
 
         const activeId = e.active.id.toString();
         const overId = e.over?.id?.toString();
@@ -35,7 +41,7 @@ const App = (): JSX.Element => {
 
     return (
         <div className="w-full p-5">
-            <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+            <DndContext onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
                 <Container>
                     <SortableContext items={columns.map((column) => column.header)} strategy={rectSwappingStrategy}>
                         {columns.map((column) => (
