@@ -24,6 +24,11 @@ const App = (): JSX.Element => {
         setOverId(e.over?.id?.toString() ?? null);
     };
 
+    const handleDragCancel = () => {
+        setActiveId(null);
+        setOverId(null);
+    };
+
     const handleDragEnd = (e: DragEndEvent): void => {
         setActiveId(null);
         setOverId(null);
@@ -41,7 +46,12 @@ const App = (): JSX.Element => {
 
     return (
         <div className="w-full p-5">
-            <DndContext onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
+            <DndContext
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDragCancel={handleDragCancel}
+                onDragEnd={handleDragEnd}
+            >
                 <Container>
                     <SortableContext items={columns.map((column) => column.header)} strategy={rectSwappingStrategy}>
                         {columns.map((column) => (
