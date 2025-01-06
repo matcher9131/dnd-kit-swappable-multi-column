@@ -1,7 +1,7 @@
 import { clsx } from "clsx";
 import { useRecoilValue } from "recoil";
 import Item from "./Item";
-import SortableHolder from "../sortableHolder";
+import SortableHolder from "../SortableHolder";
 import { activeIdState, activeParentIdSelector, overIdState, overParentIdSelector } from "../../models/dragTargets";
 import { getItemBgColor } from "../../util";
 

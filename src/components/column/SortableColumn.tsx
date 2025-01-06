@@ -2,7 +2,7 @@ import { rectSwappingStrategy, SortableContext } from "@dnd-kit/sortable";
 import { clsx } from "clsx";
 import { useRecoilValue } from "recoil";
 import Column from "./Column";
-import SortableHolder from "../sortableHolder";
+import SortableHolder from "../SortableHolder";
 import SortableItem from "../item/SortableItem";
 import { columnChildrenSelector } from "../../models/containerChildren";
 import { activeIdState } from "../../models/dragTargets";
